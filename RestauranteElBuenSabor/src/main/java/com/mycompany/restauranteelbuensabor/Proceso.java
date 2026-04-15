@@ -9,56 +9,78 @@ package com.mycompany.restauranteelbuensabor;
  * @author alfre
  */
 public class Proceso {
-public static double hacerTodo(){
-double sub=0;double iva=0;double tot=0;double aux=0;int cont=0;int i=0;
-while(i<Datos.nom.length){
-if(Datos.cant[i]>0){
+ public static double CalcularHacerFactura() {
+        double Subtotal = 0;
+        double iva = 0;
+        double Total = 0;
+        double SubtotalConDescuento = 0;
+        int CantidadProducto = 0;
+        int i = 0;
+        while (i < Datos.NombresPlatos.length) {
+            if (Datos.Cantidades[i] > 0) {
 // multiplica precio por cantidad
-sub=sub+Datos.p[i]*Datos.cant[i];
-cont=cont+1;}
-i++;}// fin while
-if(cont>3){
-if(sub>0){
-aux=sub-(sub*0.05);
-if(aux>50000){
-iva=aux*0.19;
+                Subtotal = Subtotal + Datos.Precio[i] * Datos.Cantidades[i];
+                CantidadProducto = CantidadProducto + 1;
+            }
+            i++;
+        }// fin while
+        if (CantidadProducto > 3) {
+            if (Subtotal > 0) {
+                SubtotalConDescuento = Subtotal - (Subtotal * 0.05);
+                if (SubtotalConDescuento > 50000) {
+                    iva = SubtotalConDescuento * 0.19;
 // suma iva al subtotal con descuento
-tot=aux+iva;
-tot=tot+(tot*0.10);}
-else{
+                    Total = SubtotalConDescuento + iva;
+                    Total = Total + (Total * 0.10);
+                } else {
 // suma iva al subtotal
-iva=aux*0.19;
-tot=aux+iva;}}// fin if sub>0
+                    iva = SubtotalConDescuento * 0.19;
+                    Total = SubtotalConDescuento + iva;
+                }
+            }// fin if Subtotal>0
 // version anterior - no borrar
-// sub = sub * 1.19;
-// if(sub > 40000) sub = sub + (sub*0.10);
-// return sub;
-}else{
-if(sub>50000){
-iva=sub*0.19;
+// Subtotal = Subtotal * 1.19;
+// if(Subtotal > 40000) Subtotal = Subtotal + (Subtotal*0.10);
+// return Subtotal;
+        } else {
+            if (Subtotal > 50000) {
+                iva = Subtotal * 0.19;
 // suma iva al subtotal
-tot=sub+iva;
-tot=tot+(tot*0.10);}
-else{
-iva=sub*0.19;
-tot=sub+iva;}}// fin if-else cont
-Datos.est=1;Datos.tot=tot;
-return tot;}
-public static double procesar(double a,double b,double c,double d,double e,int f,boolean g){
-double res=0;double iva=0;double prop=0;double tmp=0;
+                Total = Subtotal + iva;
+                Total = Total + (Total * 0.10);
+            } else {
+                iva = Subtotal * 0.19;
+                Total = Subtotal + iva;
+            }
+        }// fin if-else CantidadProducto
+        Datos.EstadoMesa = 1;
+        Datos.Total = Total;
+        return Total;
+    }
+
+    public static double CalcularTotal(double Precio, double Cantidad, double Descuento, double Iva, double Propina, int NumeroItems, boolean AplicaPropina) {
+        double Resultado = 0;
+        double iva = 0;
+        double ValorPropina = 0;
+        double ValorIva = 0;
 // calcula subtotal con cantidad
-res=a*b;
-if(c>0){
+        Resultado = Precio * Cantidad;
+        if (Descuento > 0) {
 // aplica descuento
-res=res-(res*c);}
+            Resultado = Resultado - (Resultado * Descuento);
+        }
 // calcula iva
-iva=res*d;tmp=iva;
-res=res+tmp;
-if(g){
+        iva = Resultado * Iva;
+        ValorIva = iva;
+        Resultado = Resultado + ValorIva;
+        if (AplicaPropina) {
 // aplica propina si corresponde
-prop=res*e;
-res=res+prop;}
-if(f>3){
-res=res-(res*0.01);}
-return res;}
+            ValorPropina = Resultado * Propina;
+            Resultado = Resultado + ValorPropina;
+        }
+        if (NumeroItems > 3) {
+            Resultado = Resultado - (Resultado * 0.01);
+        }
+        return Resultado;
+    }
 }
